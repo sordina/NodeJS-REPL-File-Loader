@@ -1,31 +1,35 @@
-var repl = require("repl");
+(function(){
 
-process.argv.shift();
-process.argv.shift();
-var location = process.argv.shift();
+	var repl = require("repl");
 
-function globalize(obj) {
-	for(var x in obj) {
-		global[x] = obj[x]
-	}
-}
+	process.argv.shift();
+	process.argv.shift();
+	var location = process.argv.shift();
 
-function req(f) {
-	if(f.match(/^\//)) {
-		require(f)
+	function globalize(obj) {
+		for(var x in obj) {
+			global[x] = obj[x]
+		}
 	}
-	else {
-		require(location + '/' + f)
-	}
-}
 
-process.argv.forEach(function(e){
-	if(e.match(/\//)) {
-		globalize(req(e));
+	function req(f) {
+		if(f.match(/^\//)) {
+			require(f)
+		}
+		else {
+			require(location + '/' + f)
+		}
 	}
-	else {
-		globalize(req("./" + e));
-	}
-})
 
-repl.start("Node.js [" + process.argv.join(" ") + "] " + "> ");
+	process.argv.forEach(function(e){
+		if(e.match(/\//)) {
+			globalize(req(e));
+		}
+		else {
+			globalize(req("./" + e));
+		}
+	})
+
+	repl.start("Node.js [" + process.argv.join(" ") + "] " + "> ");
+
+})();
