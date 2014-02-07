@@ -9,19 +9,25 @@
 	function globalize(obj) {
 		for(var x in obj) {
 			global[x] = obj[x]
+			console.log("Property: " + x)
+		}
+		if(typeof obj == 'function') {
+			global[obj.name] = obj
+			console.log("Function: " + obj.name)
 		}
 	}
 
 	function req(f) {
 		if(f.match(/^\//)) {
-			require(f)
+			return require(f)
 		}
 		else {
-			require(location + '/' + f)
+			return require(location + '/' + f)
 		}
 	}
 
 	process.argv.forEach(function(e){
+		console.log(e)
 		if(e.match(/\//)) {
 			globalize(req(e));
 		}
