@@ -5,7 +5,9 @@
 	process.argv.shift();
 	process.argv.shift();
 	var location = process.argv.shift();
+	var inline = false;
 
+	var paths = [];
 	function globalize(obj) {
 		for(var x in obj) {
 			global[x] = obj[x]
@@ -26,16 +28,29 @@
 		}
 	}
 
+
 	process.argv.forEach(function(e){
 		console.log(e)
-		if(e.match(/\//)) {
-			globalize(req(e));
-		}
-		else {
-			globalize(req("./" + e));
+		if(e == "-inline") {
+			inline = true;
+		} else if(e.match(/\//)) {
+		        paths.push("./" + e);
+		} else {
+		        paths.push(e);
 		}
 	})
 
-	repl.start("Node.js [" + process.argv.join(" ") + "] " + "> ");
+	if(!inline){
+		for(i=0;i<paths.length;i++){
+			globalize(req(paths[i]));
+		}
+	}
 
+	repl.start("Node.js [" + process.argv.join(" ") + "] " + "> "/*,putIn*/);
+
+	if(inline){
+		for(i=0;i<paths.length;i++){
+			repl.repl.commands['.load'].action.call(repl.repl,(paths[i]));
+		}
+	}
 })();
