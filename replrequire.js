@@ -6,6 +6,7 @@
 	process.argv.shift();
 	var location = process.argv.shift();
 	var inline = false;
+	var help = false;
 
 	var paths = [];
 	function globalize(obj) {
@@ -29,16 +30,24 @@
 	}
 
 
+	var count = 0;
 	process.argv.forEach(function(e){
 		console.log(e)
-		if(e == "-inline") {
+		if(e == "--help" || e == "-h"){
+			help = true;
+		} else if(e == "-i" || e == "--inline") {
 			inline = true;
 		} else if(e.match(/\//)) {
-		        paths.push("./" + e);
+			count++;
+			paths.push("./" + e);
 		} else {
-		        paths.push(e);
+			count++;
+			paths.push(e);
 		}
 	})
+	if(count==0){
+		help = true;
+	}
 
 	if(!inline){
 		for(i=0;i<paths.length;i++){
@@ -46,7 +55,15 @@
 		}
 	}
 
-	repl.start("Node.js [" + process.argv.join(" ") + "] " + "> "/*,putIn*/);
+	if(help){
+		console.log("Usage: jsrepl [-i|--inline] [files ...]"); 
+		console.log(""); 
+		console.log("Available Options:"); 
+		console.log("  -h,--help                Show this help text");
+		console.log("  -i,--inline              Load scripts inline into repl");
+	}else{
+		repl.start("Node.js [" + process.argv.join(" ") + "] " + "> "/*,putIn*/);
+	}
 
 	if(inline){
 		for(i=0;i<paths.length;i++){
